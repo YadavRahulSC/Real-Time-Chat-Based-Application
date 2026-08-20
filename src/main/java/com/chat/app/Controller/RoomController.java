@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/v1/rooms")
+@RequestMapping("/api/v1")
 public class RoomController {
 
     //Constructor Based dependency field injection
@@ -24,10 +24,10 @@ public class RoomController {
 
 
     //create room
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<?> createRoom(@RequestBody String roomId) {
 
-        if (RoomRepo.findById(roomId).isPresent()) {
+        if (RoomRepo.findByRoomId(roomId)!=null) {
             //Room is already there
 
             return ResponseEntity.badRequest().body("Room already exits");
@@ -41,8 +41,6 @@ public class RoomController {
     }
 
     // get room:Join
-
-
     @GetMapping("{roomId}")
     public ResponseEntity<?> RoomJoining(@PathVariable String roomId) {
         Room room = RoomRepo.findByRoomId(roomId);
@@ -69,8 +67,8 @@ public class RoomController {
         //Pagination
 
         List<Message> msg = room.getMsg();
-        int start = Math.max(0, msg.size() - (page - 1) * size);
-        int end = Math.min(msg.size(), start + size);
+        int start = Math.max(0, msg.size() - page * size);
+        int end = Math.min(msg.size(), msg.size() - (page - 1) * size);
         List<Message> paginatedmsg = msg.subList(start, end);
         return ResponseEntity.ok(paginatedmsg);
 
